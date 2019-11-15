@@ -48,13 +48,18 @@ class Parser:
                                                                                    port=int(t[1]['port']))
                 vmess_server.add_user(id=t[1]['id'],
                                       aid=int(t[1].get('aid', 0)),
-                                      security=t[1].get('type', 'auto'),
-                                      level=t[1].get('v', 0))
+                                      security='auto',
+                                      level=int(t[1].get('level', 0)))
                 vmess.add_server(vmess_server)
                 outbound.set_settings(vmess)
 
                 stream = Configuration.StreamSetting(type=Configuration.StreamSetting.STREAMSETTING,
-                                                     network=t[1]['net'])
+                                                     network=t[1]['net'], security=t[1].get('tls', 'auto'))
+
+                stream.set_web_socket(Configuration.StreamSetting.WebSocket(t[1].get('path', '/')))
+                masquerade_type = t[1].get('type', 'none')
+                stream.set_tcp(Configuration.StreamSetting.TCP(masquerade_type != 'none', masquerade_type))
+
                 outbound.set_stream(stream)
                 config.add_ontbound(outbound)
 

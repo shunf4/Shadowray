@@ -249,7 +249,7 @@ def servers_export(index, path):
     j = parse_json_from_file(PROJECT_CONFIG_FILE)
 
     manager = Manager(server_file_name=j['servers_file'], binary=j['v2ray_binary'])
-    s = manager.get_server(index)
+    s = manager.get_server(index - 1)
     write_to_file(path, "w", json.dumps(s['config']))
 
 
