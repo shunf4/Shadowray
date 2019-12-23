@@ -25,7 +25,7 @@ class Parser:
         text = text.split('\n')
 
         for t in text:
-            if len(t) is 0:
+            if len(t) == 0:
                 continue
             t = t.split("://")
 

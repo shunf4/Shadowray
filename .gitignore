@@ -3,3 +3,5 @@ v2ray
 venv
 dist
 shadowray.egg*
+/build/
+**/__pycache__/

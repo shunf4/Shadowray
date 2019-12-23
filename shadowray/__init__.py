@@ -14,7 +14,10 @@ import json
 import platform
 import zipfile
 import os, stat, signal
-from bullet import ScrollBar
+try:
+    from bullet import ScrollBar
+except ModuleNotFoundError:
+    pass
 
 
 def create_basic_config_file():
