@@ -1,5 +1,5 @@
 import json
-
+import copy
 
 class BaseConfig:
     def __init__(self, obj, **kwargs):
@@ -21,11 +21,13 @@ class BaseConfig:
 
 
 class Configuration(BaseConfig):
-    def __init__(self):
-        self.__configuration = {
+    def __init__(self, default_conf=None):
+        if default_conf is None:
+            default_conf = {
             "inbounds": [],
             "outbounds": []
         }
+        self.__configuration = copy.deepcopy(default_conf)
 
         super().__init__(self.__configuration)
 
@@ -40,6 +42,9 @@ class Configuration(BaseConfig):
 
     def add_ontbound(self, outbound_obj):
         self.__configuration['outbounds'].append(outbound_obj.json_obj)
+
+    def insert_outbound(self, i, outbound_obj):
+        self.__configuration['outbounds'].insert(i, outbound_obj.json_obj)
 
     class Log(BaseConfig):
         DEBUG = "debug"
@@ -437,7 +442,7 @@ class Configuration(BaseConfig):
                     })
 
             class Socks(BaseConfig):
-                def __init__(self, auth="noauth", udp=False, **kwargs):
+                def __init__(self, auth="noauth", udp=True, **kwargs):
                     self.__socks = {
                         "auth": auth,
                         "udp": udp,
@@ -507,7 +512,7 @@ class Configuration(BaseConfig):
 
                     super().__init__(self.__freedom)
 
-            class ShadowSocks(BaseConfig):
+            class Shadowsocks(BaseConfig):
                 def __init__(self):
                     self.__shadowsocks = {
                         "servers": []
