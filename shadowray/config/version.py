@@ -3,7 +3,7 @@ AUTHOR = "RMT"
 EMAIL = "d.rong@outlook.com"
 
 COMMAND_LONG = ["version", "help", "subscribe-add=", "subscribe-ls", "subscribe-rm=", "subscribe-update", "config-v2ray=", "config-subscribe=",
-                "config-servers=", "config-template=", "autoconfig", "subscribe-update", "list", "start=", "config-file=", "port=", "mux=",
+                "config-servers=", "config-template=", "autoconfig", "subscribe-update", "list", "start=", "config-file=", "port=", "socks-port=", "http-port=", "listen-addr=", "mux=",
                 "servers-export=", "daemon", "stop", "v2ray-update", "ping"]
 COMMAND_SHORT = "vhs:lf:d"
 
