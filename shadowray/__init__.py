@@ -332,11 +332,21 @@ def main():
             break
 
         if op_name in ("--subscribe-update",):
-            port = 1082
+            socks_port = 1082
+            http_port = 8118
+            listen_addr = "127.0.0.1"
+
             if "--port" in sys.argv:
-                port = int(find_arg_in_opts(opts, "--port"))
+                socks_port = int(find_arg_in_opts(opts, "--port"))
+            if "--socks-port" in sys.argv:
+                socks_port = int(find_arg_in_opts(opts, "--socks-port"))
+            if "--http-port" in sys.argv:
+                http_port = int(find_arg_in_opts(opts, "--http-port"))
+            if "--listen-port" in sys.argv:
+                listen_addr = find_arg_in_opts(opts, "--listen-port")
+
             if have_config():
-                update_subscribe(port=port)
+                update_subscribe(socks_port=socks_port, http_port=http_port, listen_addr=listen_addr)
             break
 
         if op_name in ("--list", "-l"):

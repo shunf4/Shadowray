@@ -33,12 +33,24 @@ class Parser:
 
             config = Configuration()
 
-            port = 1082
-            if kwargs.get("port") is not None:
-                port = kwargs.get("port")
-            inbound = Configuration.Inbound(port, "127.0.0.1", "socks")
+            socks_port = 1082
+            http_port = 8118
+            listen_addr = "127.0.0.1"
+            if kwargs.get("socks_port") is not None:
+                socks_port = kwargs.get("socks_port")
+            if kwargs.get("http_port") is not None:
+                http_port = kwargs.get("http_port")
+            if kwargs.get("listen_addr") is not None:
+                listen_addr = kwargs.get("listen_addr")
+
+            inbound = Configuration.Inbound(socks_port, listen_addr, "socks")
             socks = Configuration.ProtocolSetting.Inbound.Socks()
             inbound.set_settings(socks)
+            config.add_inbound(inbound)
+
+            inbound = Configuration.Inbound(http_port, listen_addr, "http")
+            http = Configuration.ProtocolSetting.Inbound.Http(0)
+            inbound.set_settings(http)
             config.add_inbound(inbound)
 
             if t[0] == "vmess":
