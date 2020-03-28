@@ -29,6 +29,7 @@ def create_basic_config_file():
         f.write('{ \
                     "v2ray_binary": null, \
                     "servers_file": null, \
+                    "template_file": null, \
                     "subscribe_file": null \
                     }')
         f.close()
@@ -60,6 +61,10 @@ def have_config():
             "Servers file not config.\nYou can config it by --config-servers path.Also, you can use --autoconfig to config it automatic.")
         return False
 
+    # if j['template_file'] is None:
+    #     print(
+    #         "Template file not config (this is optional).\nYou can config it by --config-template path.\nNote: This warning does not affect what you are doing next.")
+
     return True
 
 
@@ -73,6 +78,23 @@ def add_subscribe(args):
     manager.add_subscribe(v[0], v[1])
     manager.save_subscribe()
 
+def ls_subscribe():
+    j = parse_json_from_file(PROJECT_CONFIG_FILE)
+
+    manager = Manager(subscribe_file_name=j['subscribe_file'])
+    subscribes = manager.get_subscribe()
+    for k in subscribes.keys():
+        sys.stdout.write(k + " " + subscribes[k] + "\n")
+
+def rm_subscribe(arg):
+    j = parse_json_from_file(PROJECT_CONFIG_FILE)
+
+    manager = Manager(subscribe_file_name=j['subscribe_file'])
+    try:
+        subscribes = manager.rm_subscribe(arg)
+        return True
+    except KeyError as err:
+        sys.stderr.write("Error: subscription %s does not exist\n" % err.args[0])
 
 def basic_config_v2ray(v2ray_binary=None):
     create_basic_config_file()
@@ -115,6 +137,20 @@ def basic_config_servers(servers_file=None):
         write_to_file(servers_file, "w", '{"servers_subscribe": [] ,"servers_original": []}')
 
         write_to_file(PROJECT_CONFIG_FILE, 'w', json.dumps(j))
+
+def basic_config_template(template_file=None):
+    create_basic_config_file()
+
+    f = open(PROJECT_CONFIG_FILE, 'r')
+    j = json.load(f)
+    f.close()
+
+    if not template_file or template_file.strip() == "":
+        template_file = None
+
+    j['template_file'] = template_file
+
+    write_to_file(PROJECT_CONFIG_FILE, 'w', json.dumps(j))
 
 
 def download_latest_v2ray():
@@ -203,12 +239,12 @@ def auto_config():
     if s:
         download_latest_v2ray()
     else:
-        print("Please setup by yourself.")
+        print("Please setup v2ray by yourself.")
 
 
 def update_subscribe(**kwargs):
     j = parse_json_from_file(PROJECT_CONFIG_FILE)
-    manager = Manager(server_file_name=j['servers_file'], subscribe_file_name=j['subscribe_file'])
+    manager = Manager(server_file_name=j['servers_file'], subscribe_file_name=j['subscribe_file'], template_file_name=j.get('template_file'))
 
     manager.update_subscribe(show_info=True, **kwargs)
     manager.save_servers()
@@ -315,6 +351,16 @@ def main():
                 add_subscribe(op_value)
             break
 
+        if op_name in ("--subscribe-ls",):
+            if have_config() is True:
+                ls_subscribe()
+            break
+
+        if op_name in ("--subscribe-rm",):
+            if have_config() is True:
+                rm_subscribe(op_value)
+            break
+
         if op_name in ("--config-v2ray",):
             basic_config_v2ray(op_value)
             break
@@ -327,6 +373,10 @@ def main():
             basic_config_subscribe(op_value)
             break
 
+        if op_name in ("--config-template",):
+            basic_config_template(None if not op_value else op_value)
+            break
+
         if op_name in ("--autoconfig",):
             auto_config()
             break
@@ -334,6 +384,7 @@ def main():
         if op_name in ("--subscribe-update",):
             socks_port = 1082
             http_port = 8118
+            mux = 0
             listen_addr = "127.0.0.1"
 
             if "--port" in sys.argv:
@@ -344,9 +395,14 @@ def main():
                 http_port = int(find_arg_in_opts(opts, "--http-port"))
             if "--listen-port" in sys.argv:
                 listen_addr = find_arg_in_opts(opts, "--listen-port")
+            if "--mux" in sys.argv:
+                mux = int(find_arg_in_opts(opts, "--mux"))
+                if mux < 0 or mux > 1024:
+                    mux = 0
 
             if have_config():
-                update_subscribe(socks_port=socks_port, http_port=http_port, listen_addr=listen_addr)
+                update_subscribe(socks_port=socks_port, http_port=http_port, listen_addr=listen_addr, mux=mux)
+
             break
 
         if op_name in ("--list", "-l"):
@@ -391,4 +447,6 @@ def main():
             if have_config():
                 prepare_ping()
 
+if __name__ == "__main__":
+    main()
 # TODO: configure single proxy by users

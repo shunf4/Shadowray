@@ -6,9 +6,9 @@ import json
 
 
 class Manager:
-    def __init__(self, subscribe_file_name=None, server_file_name=None, binary=None):
+    def __init__(self, subscribe_file_name=None, server_file_name=None, binary=None, template_file_name=None):
         if subscribe_file_name is not None:
-            self.__subscribe = Parser(filename=subscribe_file_name)
+            self.__subscribe = Parser(filename=subscribe_file_name, template=template_file_name)
 
         if server_file_name is not None:
             self.__server = Server(filename=server_file_name)
@@ -18,6 +18,9 @@ class Manager:
 
     def add_subscribe(self, name, url):
         self.__subscribe.add(name, url)
+
+    def get_subscribe(self):
+        return self.__subscribe.subscribes
 
     def update_subscribe(self, show_info=False, **kwargs):
         self.__subscribe.update(show_info=show_info, **kwargs)
@@ -30,7 +33,7 @@ class Manager:
             self.__server.add(protocol=i['protocol'], config=i['config'], ps=i['ps'], key=SERVER_KEY_FROM_SUBSCRIBE,
                               host=i['host'])
 
-    def delete_subscribe(self, name):
+    def rm_subscribe(self, name):
         self.__subscribe.delete(name)
 
     def show_servers(self):
