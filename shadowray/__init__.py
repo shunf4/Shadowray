@@ -393,8 +393,8 @@ def main():
                 socks_port = int(find_arg_in_opts(opts, "--socks-port"))
             if "--http-port" in sys.argv:
                 http_port = int(find_arg_in_opts(opts, "--http-port"))
-            if "--listen-port" in sys.argv:
-                listen_addr = find_arg_in_opts(opts, "--listen-port")
+            if "--listen-addr" in sys.argv:
+                listen_addr = find_arg_in_opts(opts, "--listen-addr")
             if "--mux" in sys.argv:
                 mux = int(find_arg_in_opts(opts, "--mux"))
                 if mux < 0 or mux > 1024:

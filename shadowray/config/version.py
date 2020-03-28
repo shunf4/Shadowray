@@ -1,4 +1,4 @@
-VERSION_ID = "0.1.6"
+VERSION_ID = "0.1.7"
 AUTHOR = "RMT"
 EMAIL = "d.rong@outlook.com"
 
@@ -19,8 +19,10 @@ HELP_INFO = '''
     --config-servers <path>                               setup the path of servers file
     --config-template <path>                              setup the path of template file (to cancel this setting, set path to "")
     --autoconfig                                          setup basic setting automatically
-    --subscribe-update [--port <port>] [--mux <0/1-1024>] update subscribe (if template set, the configurations will be generated
-                                                                            according to the template, so the port is ignored)
+    --subscribe-update [--socks-port <port>]              update subscribe (if template set, the configurations will be generated
+                       [--http-port <port>]                                 according to the template, so the port is ignored)
+                       [--mux <0/1-1024>]
+                       [--listen-addr <127.0.0.1>]
     --list[-l]                                            show all servers
     --start[-s] <index> [-d|--daemon]                     start v2ray,the '-d or --daemon argument used to run v2ray as a daemon'
     --config-file[-f] <path>                              run v2ray use the config file that provided by yourself
